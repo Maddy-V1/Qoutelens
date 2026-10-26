@@ -1,0 +1,23 @@
+const vm=require('node:vm');const fs=require('node:fs');const assert=require('node:assert/strict');
+const code=fs.readFileSync('dist/app.js','utf8').split("document.addEventListener('click'")[0];
+const storage=new Map();function boot(){const c=vm.createContext({URL,URLSearchParams,location:'https://example.com/app.html',crypto:require('node:crypto').webcrypto,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},setTimeout,clearTimeout,setInterval,clearInterval,console});vm.runInContext(code,c);return c}let c=boot();
+vm.runInContext(`
+const originalId=activeId;const originalName=state.brief.name;
+state.drafts.studio={email:'owner@example.com',subject:'Original draft',body:'Original tender terms'};
+state.custom.push({id:'pdf-original',file:'original.pdf'});persist();
+const added=createTender('Society maintenance','Greenview Society');
+if(added.id===originalId||state.custom.length||Object.keys(state.drafts).length)throw Error('New tender leaked previous tender data');
+if(comparison().includes('Studio Merch offers the best'))throw Error('Sample comparison leaked into new tender');
+if(drafts().includes('aarav@studio-merch.example'))throw Error('Sample draft leaked into new tender');
+state.brief.max=240000;state.custom.push({id:'pdf-society',file:'society.pdf'});state.drafts.vendor={body:'Society terms'};persist();
+const societyId=activeId;
+activateTender(originalId);
+if(state.brief.name!==originalName||state.custom.length!==1||state.custom[0].id!=='pdf-original')throw Error('Original tender was overwritten');
+if(state.drafts.studio.body!=='Original tender terms'||state.drafts.vendor)throw Error('Draft isolation failed');
+if(!comparison().includes('₹1,400')||!evaluation().includes('₹30,200 + ₹800 = ₹31,000'))throw Error('Cost comparison explanation missing');
+state.stale=true;if(comparison().includes('Your top three'))throw Error('Stale comparison shown as current');state.stale=false;
+activateTender(societyId);persist();
+if(projectPage().includes('My projects'))throw Error('Duplicate navigation remains');
+`,c);
+c=boot();vm.runInContext(`if(state.brief.name!=='Society maintenance'||state.custom[0].id!=='pdf-society'||state.brief.max!==240000)throw Error('Reload lost active tender state');if(tenders.length!==2)throw Error('Reload lost tender list');activateTender('fest-2026');if(state.drafts.studio.subject!=='Original draft')throw Error('Reload lost first tender draft');`,c);
+console.log('PASS: independent tender creation, document and draft isolation, reload persistence, stale-result invalidation, comparison explanation, single-list navigation.');

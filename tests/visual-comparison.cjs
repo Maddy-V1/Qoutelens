@@ -1,0 +1,20 @@
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+const base=fs.readFileSync('dist/app.js','utf8').split("document.addEventListener('click'")[0];
+const experience=fs.readFileSync('dist/experience.js','utf8').split("document.addEventListener('click'")[0];
+const memory=new Map();const c=vm.createContext({URL,URLSearchParams,location:'https://example.com/app.html',window:{},crypto:require('node:crypto').webcrypto,localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)},setTimeout,clearTimeout,setInterval,clearInterval,console});
+vm.runInContext(base+'\n'+experience,c);
+vm.runInContext(`
+if(offerCost(sampleOffers[1],true)!==31000||offerCost(sampleOffers[1],false)!==30200)throw Error('Optional sample totals incorrect');
+if(paymentPercent(sampleOffers[4])!==100)throw Error('Advance units incorrect');
+if(requirementChecks(sampleOffers[4]).filter(c=>c.level==='fail').length!==3)throw Error('QuickPrint mismatches missing');
+if(requirementChecks(sampleOffers[3]).filter(c=>c.level==='fail').length!==1)throw Error('Campus delivery mismatch missing');
+if(requirementChecks(sampleOffers[1]).some(c=>c.level==='fail'))throw Error('Allowed trade-offs marked mandatory failures');
+if(comparison().includes('<table'))throw Error('Tabular comparison remains');
+if(!comparison().includes('₹1,400')||!costExplanation(sampleOffers[4]).includes('fails'))throw Error('Trade-off explanation missing');
+chartMetric='advance';if(!chartMarkup().includes('100%')||chartMarkup().includes('₹40k'))throw Error('Chart units not updated');
+chartMetric='cost';includeSample=true;if(!chartMarkup().includes('₹31,000'))throw Error('Price chart total missing');
+state.brief.agentPrompt='Ask before relaxing any specification.';if(!requirements().includes('Ask before relaxing any specification.'))throw Error('Agent instruction not retained');
+if(!evaluation().includes('Live backend not connected'))throw Error('Demo activity not disclosed');
+createTender('New isolated tender','My organisation');if(comparison().includes('Five offers reviewed'))throw Error('Sample comparison leaked');if(drafts().includes('Open draft'))throw Error('Sample drafts leaked');
+`,c);
+console.log('PASS: correct bar values and units, sample add-on toggle, mandatory versus optional exceptions, contextual explanations, retained custom prompt, activity disclosure, isolated new tender.');
