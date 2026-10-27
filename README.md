@@ -2,6 +2,14 @@
 
 A complete browser-local procurement experience, rebuilt with React, TypeScript, Vite, Motion and Lucide.
 
+
+## Pitch and submission
+
+- [Technology boxes and honest implementation status](docs/TECH_STACK.md)
+- [Project handoff and folder map](docs/SUBMISSION.md)
+- [Refined Lumi cutout](public/lumi-v3-refined.png) for the presentation (transparent PNG)
+- [Working comparison preview](docs/comparison-preview.png)
+
 ## Run
 
 ```sh
