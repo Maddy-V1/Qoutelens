@@ -18,3 +18,29 @@ body{background:var(--paper)}em{font-family:inherit;font-style:normal;font-weigh
 @media(max-width:900px){.classic-site .hero{grid-template-columns:minmax(0,1fr)}.classic-site .hero-scene{width:100%;max-width:490px;overflow:clip}}
 @media(max-width:600px){.classic-site .hero h1{font-size:38px;letter-spacing:-1.9px;line-height:1.14}.classic-site .hero-copy>p{font-size:13px}.classic-site .hero-copy>p br{display:none}.classic-site .hero-scene{padding:35px 5px;min-height:390px}.classic-site .decision-preview{width:calc(100% - 24px);min-width:0;flex-shrink:1}.classic-site .hero-actions{margin-top:25px}.classic-site .preview-offer{min-width:0}.classic-site .closing{overflow:hidden}.classic-site .closing h2{position:relative;z-index:1}}
 @media(max-width:600px){.classic-site .hero-copy>p br{display:initial}}
+/* The presentation's Lumi is now the companion and the assistant. */
+.classic-lumi-character{display:block;position:relative;flex:0 0 auto;width:96px;height:104px;overflow:visible}
+.lumi-pet-image{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 9px 9px #56398124);animation:lumi-image-float 5s ease-in-out infinite;user-select:none}
+.lumi-trigger{min-height:103px;gap:4px}
+.lumi-trigger>span:last-child:not(.classic-lumi-character){max-width:214px;min-height:64px;display:flex;flex-direction:column;justify-content:center}
+.lumi-closed{max-width:324px}
+.lumi-closed.minimal .lumi-trigger{min-height:71px}
+.lumi-closed.minimal .classic-lumi-character{width:72px;height:78px}
+.lumi-panel>header{min-height:75px}
+.lumi-panel>header .classic-lumi-character{width:58px;height:60px;overflow:visible}
+.lumi-panel>header .lumi-pet-image{animation:none;filter:drop-shadow(0 3px 4px #56398120)}
+.lumi-minimize{right:105px;top:16px}
+@keyframes lumi-image-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)}}
+@media(max-width:800px){.lumi-closed .classic-lumi-character{width:78px;height:86px}.lumi-closed.minimal .classic-lumi-character{width:63px;height:69px}.lumi-trigger{min-height:83px}.lumi-minimize{right:85px;top:10px}}
+@media(max-width:560px){.lumi-closed .classic-lumi-character{width:69px;height:77px}.lumi-closed.minimal .classic-lumi-character{width:59px;height:66px}.lumi-trigger{min-height:75px}.lumi-closed.minimal .lumi-trigger{min-height:60px}.lumi-minimize{right:73px;top:9px}.lumi-position{right:9px;bottom:8px}}
+@media(prefers-reduced-motion:reduce){.lumi-pet-image{animation:none!important}}
+/* A concrete exception alongside the shortlisted offers. */
+.classic-site .preview-alert{display:flex;align-items:center;gap:9px;margin:14px 0 0;padding:10px 11px;border:1px solid #f0ddd6;border-radius:8px;background:#fff8f5;transform:rotate(3deg)}
+.classic-site .preview-alert-mark{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:#f2ddd4;color:#a6614c;font-size:11px;font-weight:700}
+.classic-site .preview-alert strong{display:block;font-size:10px;color:#784e49;letter-spacing:0}
+.classic-site .preview-alert small{display:block;color:#9c7972;font-size:8px;margin-top:3px;line-height:1.5}
+.classic-site .preview-bottom{padding-top:13px}
+@media(max-width:600px){.classic-site .preview-alert{margin-top:11px;padding:8px}.classic-site .preview-alert strong{font-size:9px}.classic-site .preview-alert small{font-size:8px}}
+@media(min-width:601px){.classic-site .preview-alert{max-width:235px;margin-left:0}}
+.classic-site .preview-alert{max-width:235px}
+@media(min-width:801px){.classic-bar-label strong{font-size:13px}.classic-bar-label small{font-size:10px}.classic-bar-value strong{font-size:14px}.classic-chart-key>span,.classic-chart-foot{font-size:10px}.classic-selected-insight p{font-size:12px}.classic-insight-facts{font-size:11px}.classic-requirement-check strong{font-size:11px}.classic-requirement-check p{font-size:12px}.classic-company-context{font-size:10px}}

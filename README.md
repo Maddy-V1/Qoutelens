@@ -8,7 +8,7 @@ A complete browser-local procurement experience, rebuilt with React, TypeScript,
 - [Technology boxes and honest implementation status](docs/TECH_STACK.md)
 - [Project handoff and folder map](docs/SUBMISSION.md)
 - [Refined Lumi cutout](public/lumi-v3-refined.png) for the presentation (transparent PNG)
-- [Working comparison preview](docs/comparison-preview.png)
+- [Landing preview](docs/landing-preview.png) and [working comparison preview](docs/comparison-preview.png)
 
 ## Run
 
@@ -20,7 +20,7 @@ npm run build
 npm run preview
 ```
 
-The active source lives in `quotelens-rebuild/`. The earlier implementation remains in the sibling `quotelens-studio/` directory. The existing Sites project identity and owner-only access are preserved.
+This repository is the complete working application. The existing Sites project identity and owner-only access are preserved.
 
 ## Walkthrough
 
