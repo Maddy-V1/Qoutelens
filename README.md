@@ -16,7 +16,7 @@ The active source lives in `quotelens-rebuild/`. The earlier implementation rema
 
 ## Walkthrough
 
-Landing → My Tenders → “A team worth wearing.” → The brief → Quotations → Review → Comparison → Lumi → Drafts → Studio Merch portfolio → Invite to a tender.
+Landing → My Tenders → “College fest merchandise” → The brief → Quotations → Review → Comparison → Lumi → Drafts → Studio Merch portfolio → Invite to a tender.
 
 The sample is 100 cotton team T-shirts for TechSpace Fest, delivered to Dwarka by 10 November 2026. All sample businesses, documents and projects are illustrative.
 
@@ -37,7 +37,7 @@ Print & Co.’s included charges are setup ₹800, delivery ₹700, and a requir
 - PDF selection/drop, signature/type/25 MB validation, local IndexedDB storage, original-PDF viewing.
 - Manual review of supplier identity, quantities, prices, tax, options, specifications, dates, advances and exclusions. Blank means unknown, never zero.
 - Deterministic paise-based arithmetic and mandatory checks. Changed briefs invalidate offer review. Changed offers recalculate the comparison.
-- Cost breakdowns, requirements, timing and cash views; priorities reorder viable offers without relaxing hard limits.
+- Interactive cost/advance chart, selected-offer evidence, written requirements and delivery dates; priorities reorder viable offers without relaxing hard limits.
 - Per-tender shortlist, saved drafts, .eml download, copy, explicit buyer-recorded external-send/reply status.
 - Dedicated supplier search, capability/category/location filters, saved suppliers, rich sample portfolios, editable local portfolio drafts and tender invitation drafts.
 - Lumi transforms from a compact animated character to a contextual assistant panel. Responses are rule-based, scoped to the active tender, and explicitly labeled as a guided demo.
@@ -58,8 +58,8 @@ Free-text requirements cannot be semantically verified by this demo. Explicit bu
 
 `npm run build`: TypeScript checks and production bundling pass.
 
-Browser QA: desktop layout at approximately 1309 CSS pixels and phone layout at 390 CSS pixels; landing, tender list/brief/creation, quotation review, comparison, Lumi, drafts and supplier portfolio. Tested priority changes, draft edit/save/reload, supplier invitation privacy, separate tender creation, manual quotation calculation (₹35,990), and long supplier-name wrapping without horizontal page overflow. The native date control was exercised through accessibility input. Screenshots are local in ignored `qa/`.
+Browser QA: desktop layout at approximately 1309 CSS pixels and phone layout at 390 CSS pixels; landing, tender list/brief/creation, quotation review, comparison, Lumi, drafts and supplier portfolio. Tested priority changes, draft edit/save/reload, supplier invitation privacy, separate tender creation, manual quotation calculation (₹35,990), and long supplier-name wrapping without horizontal page overflow. The native date control was exercised through accessibility input. Screenshots are local in ignored `qa/`. After restoring the older visual direction, checked landing, My Tenders, comparison, Lumi, drafts and portfolio again; corrected inherited mobile landing and navigation overflow. Native file-picker automation was unavailable, so PDF upload was not verified end-to-end in the browser.
 
 ## Design references
 
-The visual system is original: petrol, warm paper, sage, precise cost bars and editorial serif accents. [Magic UI](https://magicui.design/) and [21st.dev](https://21st.dev/) informed restrained progressive reveals and component interaction patterns. [Motion’s shared layout documentation](https://motion.dev/docs/react-layout-animations) informed Lumi and navigation transitions. No whole template was copied. SVG portfolio artwork is original illustrative code.
+The final direction restores the preferred earlier QuoteLens design: lavender, white surfaces, a familiar sidebar workflow, compact selectable comparison bars, and the original long-eared Lumi companion. The React data model, editable reviews, hard-limit calculations and richer supplier portfolios are retained from the rebuild. [Magic UI](https://magicui.design/) and [21st.dev](https://21st.dev/) informed restrained progressive reveals and component interaction patterns. [Motion’s shared layout documentation](https://motion.dev/docs/react-layout-animations) informed Lumi and navigation transitions. No whole template was copied. SVG portfolio artwork is original illustrative code.
