@@ -10,17 +10,41 @@ A complete browser-local procurement experience, rebuilt with React, TypeScript,
 - [Refined Lumi cutout](public/lumi-v3-refined.png) for the presentation (transparent PNG)
 - [Landing preview](docs/landing-preview.png) and [working comparison preview](docs/comparison-preview.png)
 
-## Run
+## Set up and run locally
+
+**Prerequisites:** Node.js 22 and npm. The project was verified with Node.js 22.23.1. No API keys or `.env` file are needed for the current browser-local demo.
 
 ```sh
+git clone https://github.com/Maddy-V1/Qoutelens.git
+cd Qoutelens
 npm ci
 npm run dev
+```
+
+Open **http://127.0.0.1:5173/** in your browser. The server prints its URL if port 5173 is already in use. Start at **My Tenders** and open the clearly marked sample tender to see a complete comparison; or create your own tender. Press `Ctrl+C` in the terminal to stop the server.
+
+### Check and preview the production build
+
+```sh
 npm test
 npm run build
 npm run preview
 ```
 
-This repository is the complete working application. The existing Sites project identity and owner-only access are preserved.
+Open the URL printed by `npm run preview` to inspect the production bundle. `npm test` runs the deterministic cost and requirement tests; `npm run build` checks TypeScript and writes the deployable static site to `dist/`.
+
+### Where your data goes
+
+Tenders, corrections, drafts and saved suppliers are stored in this browser. PDF files are kept in the browser’s IndexedDB; they are not uploaded to a server. Data is separate per tender and per browser profile. Clearing site data removes it. The sample can be explored without an account or email connection. Supplier portfolios and evidence shown in the sample are illustrative.
+
+### Troubleshooting
+
+- If `npm ci` fails, confirm you are using Node.js 22 and that you ran it from the folder containing `package.json`.
+- If the screen is blank after switching branches or editing files, stop the development server and run `npm run dev` again. Check the browser console for the first error.
+- If a PDF is not accepted, use a valid PDF under 25 MB. The demo does not extract text automatically; open its review screen and enter verified fields manually.
+- If your tender is missing on another device or browser, that is expected until authentication and cloud persistence are connected.
+
+This repository contains the complete working prototype. The existing Sites project identity and owner-only access are preserved.
 
 ## Walkthrough
 
@@ -48,7 +72,7 @@ Print & Co.’s included charges are setup ₹800, delivery ₹700, and a requir
 - Interactive cost/advance chart, selected-offer evidence, written requirements and delivery dates; priorities reorder viable offers without relaxing hard limits.
 - Per-tender shortlist, saved drafts, .eml download, copy, explicit buyer-recorded external-send/reply status.
 - Dedicated supplier search, capability/category/location filters, saved suppliers, rich sample portfolios, editable local portfolio drafts and tender invitation drafts.
-- Lumi transforms from a compact animated character to a contextual assistant panel. Responses are rule-based, scoped to the active tender, and explicitly labeled as a guided demo.
+- Lumi transforms from a compact animated character to a contextual assistant panel. The same minimized companion remains available on every page. It responds to typed questions about the current page or tender using transparent rules and is labeled as a guided demo.
 - Separate readable activity and evidence log, accessible native dialogs, keyboard focus styles, reduced-motion support, and mobile compositions.
 - Unsaved edit protection for quotation reviews and correspondence; recoverable application error screen.
 
@@ -67,6 +91,8 @@ Free-text requirements cannot be semantically verified by this demo. Explicit bu
 `npm run build`: TypeScript checks and production bundling pass.
 
 Browser QA: desktop layout at approximately 1309 CSS pixels and phone layout at 390 CSS pixels; landing, tender list/brief/creation, quotation review, comparison, Lumi, drafts and supplier portfolio. Tested priority changes, draft edit/save/reload, supplier invitation privacy, separate tender creation, manual quotation calculation (₹35,990), and long supplier-name wrapping without horizontal page overflow. The native date control was exercised through accessibility input. Screenshots are local in ignored `qa/`. After restoring the older visual direction, checked landing, My Tenders, comparison, Lumi, drafts and portfolio again; corrected inherited mobile landing and navigation overflow. Native file-picker automation was unavailable, so PDF upload was not verified end-to-end in the browser.
+
+Latest pass: My Tenders and tender workspaces now use the same top navigation as Explore Suppliers, with tender steps retained in the workspace. Checked it at 1440 px and 390 px. Opened, minimized and typed into Lumi on the comparison screen; its QuickPrint answer cited the entered ₹28,875 total and specific failed requirements.
 
 ## Design references
 
