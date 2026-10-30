@@ -7,7 +7,7 @@ The complete working prototype is the repository root (`quotelens-rebuild/`). Us
 - `src/` — product screens, local storage and decision logic.
 - `public/lumi-v3-refined.png` — transparent Lumi cutout for slides and later website integration.
 - `docs/lumi-pitch-reference.png` — the supplied V3 presentation reference.
-- `docs/landing-preview.png` and `docs/comparison-preview.png` — working desktop captures.
+- `docs/landing-preview.png`, `docs/landing-mobile-preview.png`, and `docs/comparison-preview.png` — working desktop and phone captures.
 - `docs/TECH_STACK.md` — pitch-ready stack and current/planned status.
 - `tests/domain.test.ts` — price and mandatory-rule tests.
 - `README.md` — setup, walkthrough, limits and validation.

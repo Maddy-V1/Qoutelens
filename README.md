@@ -8,7 +8,7 @@ A complete browser-local procurement experience, rebuilt with React, TypeScript,
 - [Technology boxes and honest implementation status](docs/TECH_STACK.md)
 - [Project handoff and folder map](docs/SUBMISSION.md)
 - [Refined Lumi cutout](public/lumi-v3-refined.png) for the presentation (transparent PNG)
-- [Landing preview](docs/landing-preview.png) and [working comparison preview](docs/comparison-preview.png)
+- [Desktop landing preview](docs/landing-preview.png), [phone landing preview](docs/landing-mobile-preview.png), and [working comparison preview](docs/comparison-preview.png)
 
 ## Set up and run locally
 
@@ -94,6 +94,8 @@ Browser QA: desktop layout at approximately 1309 CSS pixels and phone layout at 
 
 Latest pass: My Tenders and tender workspaces now use the same top navigation as Explore Suppliers, with tender steps retained in the workspace. Checked it at 1440 px and 390 px. Opened, minimized and typed into Lumi on the comparison screen; its QuickPrint answer cited the entered ₹28,875 total and specific failed requirements.
 
+Landing redesign: the first view now uses an interactive sample decision instead of decorative quotation art. It shows the same sample brief against QuickPrint, Studio Merch and Campus Supply, with exact evaluated totals and a selectable explanation. The supplier path remains prominent in the hero and has a dedicated portfolio preview. Checked the new page at laptop, tablet and phone widths; selected offers and supplier category filters were exercised.
+
 ## Design references
 
-The final direction restores the preferred earlier QuoteLens design: lavender, white surfaces, a familiar sidebar workflow, compact selectable comparison bars, and the original long-eared Lumi companion. The React data model, editable reviews, hard-limit calculations and richer supplier portfolios are retained from the rebuild. [Magic UI](https://magicui.design/) and [21st.dev](https://21st.dev/) informed restrained progressive reveals and component interaction patterns. [Motion’s shared layout documentation](https://motion.dev/docs/react-layout-animations) informed Lumi and navigation transitions. No whole template was copied. SVG portfolio artwork is original illustrative code.
+The product retains the preferred earlier QuoteLens design: lavender, white surfaces, a familiar tender workflow, compact selectable comparison bars, and the long-eared Lumi companion. The landing page uses an editorial decision board to make a real mismatch visible in its first view. The React data model, editable reviews, hard-limit calculations and richer supplier portfolios are retained from the rebuild. [Magic UI](https://magicui.design/) and [21st.dev](https://21st.dev/) informed restrained progressive reveals and component interaction patterns. [Motion’s shared layout documentation](https://motion.dev/docs/react-layout-animations) informed Lumi and navigation transitions. No whole template was copied. Supplier artwork is original illustrative code.
