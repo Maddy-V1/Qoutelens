@@ -1,101 +1,104 @@
 # QuoteLens
 
-A complete browser-local procurement experience, rebuilt with React, TypeScript, Vite, Motion and Lucide.
+Compare supplier quotations for **any product or service**: painting, construction, software, websites, events, supplies, consulting and more. Write or upload a tender brief, extract quotations with Gemma 4 vision, review the Markdown, and generate a comparison plus individual supplier email drafts.
 
+## Quick start
 
-## Pitch and submission
-
-- [Technology boxes and honest implementation status](docs/TECH_STACK.md)
-- [Project handoff and folder map](docs/SUBMISSION.md)
-- [Refined Lumi cutout](public/lumi-v3-refined.png) for the presentation (transparent PNG)
-- [Desktop landing preview](docs/landing-preview.png), [phone landing preview](docs/landing-mobile-preview.png), and [working comparison preview](docs/comparison-preview.png)
-
-## Set up and run locally
-
-**Prerequisites:** Node.js 22 and npm. The project was verified with Node.js 22.23.1. No API keys or `.env` file are needed for the current browser-local demo.
+Requirements: Node.js 22+, npm, a MongoDB database, and an OpenRouter API key with access to the configured vision model.
 
 ```sh
-git clone https://github.com/Maddy-V1/Qoutelens.git
-cd Qoutelens
-npm ci
+npm install
+# Copy .env.example to .env only if .env does not already exist.
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173/** in your browser. The server prints its URL if port 5173 is already in use. Start at **My Tenders** and open the clearly marked sample tender to see a complete comparison; or create your own tender. Press `Ctrl+C` in the terminal to stop the server.
+Open [QuoteLens](http://127.0.0.1:5173/). The development command starts both Vite (5173) and the Node API (8787).
 
-### Check and preview the production build
+The local `.env` is ignored by Git. Configure:
+
+```dotenv
+MONGODB_URI=your_mongodb_connection_string
+MONGODB_DB=quotelens
+OPENROUTER_API_KEY=your_openrouter_key
+OPENROUTER_MODEL=google/gemma-4-31b-it
+API_PORT=8787
+APP_ORIGIN=http://127.0.0.1:5173
+NODE_ENV=development
+```
+
+**Restart the API after changing `.env`.** Do not replace an existing `.env` with the example or put secrets in `VITE_` variables. For Atlas, use a database-user connection string, keep the cluster active, and allow your computer's current IP in Atlas Network Access.
+
+Check [API health](http://127.0.0.1:8787/api/health). `database: connected` confirms a successful database connection. `ai: configured` means a key exists; it does not by itself verify the provider account.
+
+If Vite is already running, start only the API with `npm run dev:server`. Use `npm run dev:client` to start only Vite.
+
+## The complete workflow
+
+1. **Create an account / log in.** Workspaces are private to the signed-in account. New accounts start empty.
+2. **Create a tender.** Enter a project name and write the requirements in Markdown. Scope, must-haves, milestones, quantities, specifications, warranty/support, optional work and acceptable compromises belong in this one document. Location, deadline and private budget are optional.
+3. **Or upload your existing brief.** On the brief form choose a PDF, PNG, JPG or WebP, then click **Start extracting**. Gemma transcribes every page into Markdown and fills the supported basic fields. Existing title/location/deadline entries are retained when present; the document replaces the brief's Markdown text. Review it before saving. The original file and original model transcription are kept.
+4. **Create/save the tender.** The Markdown brief is the benchmark for comparison. You can edit it later or download it as `.md`.
+5. **Add quotations.** Open Quotations, choose files and click **Start extracting**. Gemma reads the document images, transcribes all line items, options, terms, exclusions and footnotes into Markdown, and fills supplier name/email, explicit final total and currency. No T-shirt-specific fields are required.
+6. **Review, then Save & preview.** Check extracted content against the original file. Correct mistakes. Missing values stay unknown. Complete this review for every quotation before comparison.
+7. **Click Start comparison.** Gemma receives the full reviewed brief and all reviewed quotations. It evaluates scope, costs, currencies, deliverables, requirements, payment, deadlines, risks and missing information. It may return no recommendation when evidence is insufficient. The result is saved as Markdown.
+8. **Review supplier email drafts.** After comparison, separate model requests create a draft for each supplier using only that supplier's quotation and a supplier-facing brief. The private budget field, other suppliers and comparison report are excluded from draft requests. Review, edit, save, copy or download `.eml`. No email is sent automatically.
+9. **Ask Lumi.** Inside a tender, ask questions about the saved brief, quotations and comparison using the configured model.
+10. **Return later.** Briefs, original files, transcriptions, reviewed documents, comparisons, drafts and activity are stored in MongoDB under your account.
+
+Changing the brief or a reviewed quotation clears its old comparison so it can be regenerated against the new content.
+
+## Exactly what is sent to Gemma?
+
+Read [Exact prompts and model data flow](docs/GEMMA-PROMPTS-AND-DATA-FLOW.md). This document includes the **full verbatim system prompts**, request payload shapes, output fields, exclusions and storage behavior for:
+
+- Brief document extraction.
+- Quotation document extraction.
+- Internal comparison.
+- Individual supplier email drafts.
+- Lumi questions.
+
+The source of truth is [`server/prompts.mjs`](server/prompts.mjs). Regenerate the document after changing prompts:
+
+```sh
+node server/write-prompt-doc.mjs
+```
+
+PDF.js renders PDF pages into images in the browser; the images go directly to Gemma 4 through OpenRouter. **No PaddleOCR, Tesseract, separate OCR service or file-parser plugin is used.** Original files are stored in MongoDB GridFS. Exact original model text is retained separately from the buyer-edited Markdown; AI transcription still requires source review.
+
+The private budget is supplied for internal comparison and Lumi, but omitted from supplier draft context. Known private-budget amounts and explicitly labeled private/internal-budget lines are also removed from brief text for draft requests. Review generated messages before sending. Database credentials, passwords and session cookies are never sent to the model. The OpenRouter key is used only server-side for API authorization.
+
+## Verify the submission
 
 ```sh
 npm test
+npm run test:server
 npm run build
-npm run preview
 ```
 
-Open the URL printed by `npm run preview` to inspect the production bundle. `npm test` runs the deterministic cost and requirement tests; `npm run build` checks TypeScript and writes the deployable static site to `dist/`.
+- 14 domain tests cover the existing cost/requirement calculations.
+- Backend tests use a temporary **real MongoDB instance** for account isolation, sessions, persistence, file ownership, brief/quotation extraction endpoint contracts, save conflicts, comparison reports and draft persistence. Model responses are simulated in the integration suite.
+- Live brief parsing also passed on a synthetic website tender: correct 20 November 2026 deadline, Remote location and optional SMS work preserved in Markdown.
+- Separate live Gemma smoke tests succeeded on a synthetic painting quotation: extracted total **INR 29,500**, preserved optional ceiling work, generated a comparison and prepared one supplier draft without the private budget. See the `docs/test-painting-*` artifacts.
+- Atlas connectivity is environment-dependent. Treat it as verified only when the health endpoint reports `connected`.
 
-### Where your data goes
+## Useful files
 
-Tenders, corrections, drafts and saved suppliers are stored in this browser. PDF files are kept in the browser’s IndexedDB; they are not uploaded to a server. Data is separate per tender and per browser profile. Clearing site data removes it. The sample can be explored without an account or email connection. Supplier portfolios and evidence shown in the sample are illustrative.
+| File | Purpose |
+| --- | --- |
+| `.env.example` | Environment variable template; actual `.env` stays untracked |
+| `server/index.mjs` | Auth, sessions, ownership, MongoDB/GridFS and API routes |
+| `server/ai.mjs` | OpenRouter adapter, input projection, extraction/comparison/drafting |
+| `server/prompts.mjs` | Exact prompts sent to Gemma |
+| `server/validation.mjs` | Input and model-response schemas |
+| `src/vision.ts` | PDF/image preparation; no OCR |
+| `src/Tenders.tsx` | Generic brief creation, PDF/image import and Markdown review |
+| `src/Quotations.tsx` | Quotation extraction, source verification and save/preview |
+| `src/AIComparison.tsx` | Explicit model comparison and results |
+| `src/useCloudWorkspace.ts` | Account workspace loading and versioned autosave |
+| `BACKEND.md` | Extra setup, endpoint and architecture details |
 
-### Troubleshooting
+## Current limits
 
-- If `npm ci` fails, confirm you are using Node.js 22 and that you ran it from the folder containing `package.json`.
-- If the screen is blank after switching branches or editing files, stop the development server and run `npm run dev` again. Check the browser console for the first error.
-- If a PDF is not accepted, use a valid PDF under 25 MB. The demo does not extract text automatically; open its review screen and enter verified fields manually.
-- If your tender is missing on another device or browser, that is expected until authentication and cloud persistence are connected.
+Maximum 20 MB per document, 12 pages per PDF and 10 quotations per comparison. Larger PDFs are rejected rather than truncated. Extraction/comparison can take a few minutes, depending on provider speed. Errors and incomplete responses are shown without replacing saved work. A stale workspace save is rejected to avoid overwriting another tab.
 
-This repository contains the complete working prototype. The existing Sites project identity and owner-only access are preserved.
-
-## Walkthrough
-
-Landing → My Tenders → “College fest merchandise” → The brief → Quotations → Review → Comparison → Lumi → Drafts → Studio Merch portfolio → Invite to a tender.
-
-The sample is 100 cotton team T-shirts for TechSpace Fest, delivered to Dwarka by 10 November 2026. All sample businesses, documents and projects are illustrative.
-
-| Supplier | Base | Included charges | Tax | Evaluated total | Decision |
-| --- | ---: | ---: | ---: | ---: | --- |
-| QuickPrint | ₹24,000 | ₹3,500 | ₹1,375 | ₹28,875 | Fails fabric, delivery, advance and overall mandatory confirmation |
-| Campus Supply | ₹28,000 | Unknown delivery | ₹1,400 on known amount | ₹29,400 + unknowns | Delivery date/cost and review incomplete |
-| Print & Co. | ₹27,000 | ₹2,100 | ₹1,455 | ₹30,555 | Viable; bulk packing explicitly allowed |
-| Studio Merch | ₹30,000 | ₹0 | ₹1,500 | ₹31,500 | Overall fit recommendation |
-| Threadworks | ₹32,000 | ₹0 | ₹1,600 | ₹33,600 | Earliest delivery and lowest upfront payment |
-
-Print & Co.’s included charges are setup ₹800, delivery ₹700, and a required printed sample ₹600. Excluding a required option blocks eligibility. All tax in this sample is 5% of base plus included charges. Actual tax applicability must be verified against the supplier document.
-
-## Working functionality
-
-- Independent tenders, editable briefs, explicit private budget versus disclosed range.
-- Short two-step creation, optional specifications, payment, compromises and reference filename list.
-- PDF selection/drop, signature/type/25 MB validation, local IndexedDB storage, original-PDF viewing.
-- Manual review of supplier identity, quantities, prices, tax, options, specifications, dates, advances and exclusions. Blank means unknown, never zero.
-- Deterministic paise-based arithmetic and mandatory checks. Changed briefs invalidate offer review. Changed offers recalculate the comparison.
-- Interactive cost/advance chart, selected-offer evidence, written requirements and delivery dates; priorities reorder viable offers without relaxing hard limits.
-- Per-tender shortlist, saved drafts, .eml download, copy, explicit buyer-recorded external-send/reply status.
-- Dedicated supplier search, capability/category/location filters, saved suppliers, rich sample portfolios, editable local portfolio drafts and tender invitation drafts.
-- Lumi transforms from a compact animated character to a contextual assistant panel. The same minimized companion remains available on every page. It responds to typed questions about the current page or tender using transparent rules and is labeled as a guided demo.
-- Separate readable activity and evidence log, accessible native dialogs, keyboard focus styles, reduced-motion support, and mobile compositions.
-- Unsaved edit protection for quotation reviews and correspondence; recoverable application error screen.
-
-## What remains to connect
-
-No live OCR or model API runs. Uploaded PDFs open with blank fields for manual verification. Sample evidence records are illustrative, not claims of extraction. There is no cloud persistence, authentication/team access, public supplier signup/identity verification, Gmail sending or reply sync. Reference attachments on the brief store filenames only. PDF contents stay in this browser via IndexedDB. Tender data, drafts and local profiles use localStorage. Clearing site data removes those local records.
-
-Generated supplier messages exclude the private budget and competitor prices. They never accept an offer. Email is never presented as sent by QuoteLens. A waiting status requires the buyer to attest they sent it externally.
-
-Free-text requirements cannot be semantically verified by this demo. Explicit buyer confirmation is required; exact structured specifications are compared conservatively. No ranking confidence percentages are fabricated.
-
-## Validation
-
-`npm test`: 14 tests cover all five totals, tax/advance arithmetic, paise rounding, hard limits, incomplete costs, required options, private budget, priorities, draft confidentiality and tender isolation.
-
-`npm run build`: TypeScript checks and production bundling pass.
-
-Browser QA: desktop layout at approximately 1309 CSS pixels and phone layout at 390 CSS pixels; landing, tender list/brief/creation, quotation review, comparison, Lumi, drafts and supplier portfolio. Tested priority changes, draft edit/save/reload, supplier invitation privacy, separate tender creation, manual quotation calculation (₹35,990), and long supplier-name wrapping without horizontal page overflow. The native date control was exercised through accessibility input. Screenshots are local in ignored `qa/`. After restoring the older visual direction, checked landing, My Tenders, comparison, Lumi, drafts and portfolio again; corrected inherited mobile landing and navigation overflow. Native file-picker automation was unavailable, so PDF upload was not verified end-to-end in the browser.
-
-Latest pass: My Tenders and tender workspaces now use the same top navigation as Explore Suppliers, with tender steps retained in the workspace. Checked it at 1440 px and 390 px. Opened, minimized and typed into Lumi on the comparison screen; its QuickPrint answer cited the entered ₹28,875 total and specific failed requirements.
-
-Landing redesign: the first view now uses an interactive sample decision instead of decorative quotation art. It shows the same sample brief against QuickPrint, Studio Merch and Campus Supply, with exact evaluated totals and a selectable explanation. The supplier path remains prominent in the hero and has a dedicated portfolio preview. Checked the new page at laptop, tablet and phone widths; selected offers and supplier category filters were exercised.
-
-## Design references
-
-The product retains the preferred earlier QuoteLens design: lavender, white surfaces, a familiar tender workflow, compact selectable comparison bars, and the long-eared Lumi companion. The landing page uses an editorial decision board to make a real mismatch visible in its first view. The React data model, editable reviews, hard-limit calculations and richer supplier portfolios are retained from the rebuild. [Magic UI](https://magicui.design/) and [21st.dev](https://21st.dev/) informed restrained progressive reveals and component interaction patterns. [Motion’s shared layout documentation](https://motion.dev/docs/react-layout-animations) informed Lumi and navigation transitions. No whole template was copied. Supplier artwork is original illustrative code.
+Email sending/reply sync and password-reset email delivery are not configured. Login/signup, authenticated account persistence, extraction, comparison and draft preparation use the backend. Supplier sample portfolios remain illustrative and require direct credential verification. The server binds to loopback for local development; public hosting needs HTTPS and the correct `APP_ORIGIN`.

@@ -3,7 +3,7 @@ import { ArrowUpRight, Check, X, CircleHelp, Minus, ArrowRight, ChevronRight } f
 import { motion } from 'motion/react';
 import type { Store } from './storage';
 import type { Tender, CheckState, Supplier } from './domain';
-export const Context=createContext< {store:Store;setStore:React.Dispatch<React.SetStateAction<Store>>;notify:(s:string)=>void;go:(s:string)=>void;openInfo:()=>void} >(null!);
+export const Context=createContext< {store:Store;setStore:React.Dispatch<React.SetStateAction<Store>>;notify:(s:string)=>void;go:(s:string)=>void;openInfo:()=>void;user:import('./useCloudWorkspace').User|null;refreshSession:()=>Promise<import('./useCloudWorkspace').User|null>;logout:()=>Promise<void>;syncNow:()=>Promise<void>;acceptRemote:(data:{store:Store;version:number})=>void} >(null!);
 export const useApp=()=>useContext(Context);
 export function useUnsavedChanges(dirty:boolean){useEffect(()=>{if(!dirty)return;const before=(e:BeforeUnloadEvent)=>{e.preventDefault();e.returnValue='';};const click=(e:MouseEvent)=>{const a=(e.target as Element)?.closest('a[href]');if(a&&a.getAttribute('href')?.startsWith('#/')&&a.getAttribute('href')!==location.hash&&!window.confirm('You have unsaved changes. Leave this page without saving?')){e.preventDefault();e.stopPropagation();}};window.addEventListener('beforeunload',before);document.addEventListener('click',click,true);return()=>{window.removeEventListener('beforeunload',before);document.removeEventListener('click',click,true);};},[dirty]);}
 
@@ -11,7 +11,7 @@ export function useTender(id:string){const a=useApp();return {...a,tender:a.stor
 export const path=(id:string,view='brief')=>`tender/${id}/${view}`;
 export function Link({to,children,className='',...rest}:{to:string;children:ReactNode;className?:string;[x:string]:unknown}){return <a href={`#/${to}`} className={className} {...rest}>{children}</a>}
 export function Button({children,onClick,variant='primary',className='',type='button',disabled=false,...rest}:{children:ReactNode;onClick?:()=>void;variant?:'primary'|'secondary'|'ghost'|'light'|'danger';className?:string;type?:'button'|'submit';disabled?:boolean;[x:string]:unknown}){return <button type={type} onClick={onClick} disabled={disabled} className={`button ${variant} ${className}`} {...rest}>{children}</button>}
-export function Logo(){return <Link to="" className="brand" aria-label="QuoteLens home"><span className="classic-brand-mark" aria-hidden="true">q</span><span>quotelens</span></Link>}
+export function Logo({small=false,className=''}:{small?:boolean;className?:string}){return <Link to="" className={`brand ql-brand ${small?'ql-brand-small':''} ${className}`} aria-label="QuoteLens home"><span className="ql-brand-symbol" aria-hidden="true"><i/><i/></span><span>quotelens<span className="ql-brand-period">.</span></span></Link>}
 export function Eyebrow({children}:{children:ReactNode}){return <div className="eyebrow"><span/>{children}</div>}
 export function Badge({children,tone='neutral'}:{children:ReactNode;tone?:string}){return <span className={`badge ${tone}`}>{children}</span>}
 const checkNames={met:'Met',mismatch:'Mismatched',unclear:'Unclear',compromise:'Acceptable compromise'};
