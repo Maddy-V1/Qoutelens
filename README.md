@@ -2,19 +2,54 @@
 
 Compare supplier quotations for **any product or service**: painting, construction, software, websites, events, supplies, consulting and more. Write or upload a tender brief, extract quotations with Gemma 4 vision, review the Markdown, and generate a comparison plus individual supplier email drafts.
 
-## Quick start
+## Installation and startup commands
 
-Requirements: Node.js 22+, npm, a MongoDB database, and an OpenRouter API key with access to the configured vision model.
+Requirements: **Node.js 22+**, npm, a MongoDB database and an OpenRouter key with access to the configured vision model. This project was built and tested with Node.js 22.23.1.
+
+### 1. Open the project folder
+
+For the existing checkout on this Mac:
 
 ```sh
-npm install
-# Copy .env.example to .env only if .env does not already exist.
-npm run dev
+cd /Users/madhavvarshney/Documents/ChatGPT/hackatoberfest/quotelens-rebuild
 ```
 
-Open [QuoteLens](http://127.0.0.1:5173/). The development command starts both Vite (5173) and the Node API (8787).
+For a fresh setup on another machine, use these commands instead:
 
-The local `.env` is ignored by Git. Configure:
+```sh
+git clone https://github.com/Maddy-V1/Qoutelens.git
+cd Qoutelens
+```
+
+Check the installed runtime:
+
+```sh
+node --version
+npm --version
+```
+
+If Node.js is missing or older than 22, install Node.js 22 or newer before continuing. MongoDB Atlas does not require a local MongoDB installation.
+
+### 2. Install the project dependencies
+
+Run this from the folder containing `package.json`:
+
+```sh
+npm ci
+```
+
+This installs the exact dependency versions from `package-lock.json`, including the frontend, MongoDB driver, PDF renderer and Markdown tools. No Python environment, PaddleOCR or separate OCR package is needed.
+
+### 3. Configure the environment
+
+Create `.env` only if it does not already exist. This command preserves an existing configured file:
+
+```sh
+[ -f .env ] || cp .env.example .env
+nano .env
+```
+
+Fill in your real values locally:
 
 ```dotenv
 MONGODB_URI=your_mongodb_connection_string
@@ -26,11 +61,78 @@ APP_ORIGIN=http://127.0.0.1:5173
 NODE_ENV=development
 ```
 
-**Restart the API after changing `.env`.** Do not replace an existing `.env` with the example or put secrets in `VITE_` variables. For Atlas, use a database-user connection string, keep the cluster active, and allow your computer's current IP in Atlas Network Access.
+In nano, press **Ctrl+O**, then **Enter** to save; press **Ctrl+X** to exit.
 
-Check [API health](http://127.0.0.1:8787/api/health). `database: connected` confirms a successful database connection. `ai: configured` means a key exists; it does not by itself verify the provider account.
+The current Mac checkout already has a configured `.env`; keep it. A fresh clone does not include real credentials because `.env` is ignored by Git. Never put secrets in `VITE_` variables or commit them.
 
-If Vite is already running, start only the API with `npm run dev:server`. Use `npm run dev:client` to start only Vite.
+For MongoDB Atlas:
+
+1. Keep the cluster active and use a **database user**, not your Atlas account login.
+2. In **Security → Network Access**, add the computer's current IP address and wait until the entry is active.
+3. Copy the cluster's driver connection string into `MONGODB_URI`, replacing username/password placeholders. Percent-encode special characters in the password.
+4. If connections still time out, check that the local network allows outbound TCP port 27017.
+
+### 4. Start the full application
+
+```sh
+npm run dev
+```
+
+Keep that terminal open. This one command starts both services:
+
+| Service | Address |
+| --- | --- |
+| Frontend | http://127.0.0.1:5173/ |
+| Backend API | http://127.0.0.1:8787/ |
+| API health | http://127.0.0.1:8787/api/health |
+
+Open [QuoteLens](http://127.0.0.1:5173/), create an account and start a tender. Stop both services with **Ctrl+C** in the terminal where you ran `npm run dev`.
+
+### 5. Check the connection
+
+In a second terminal:
+
+```sh
+curl http://127.0.0.1:8787/api/health
+```
+
+Look for `"database":"connected"` and `"ai":"configured"`. The AI flag means a key is present; it is not a provider billing/access check. Signup requires the MongoDB connection to succeed. A 503 with an Atlas timeout means you should check the cluster and IP/network access above.
+
+### Restart after editing .env
+
+Press **Ctrl+C** in the running application's terminal, then:
+
+```sh
+npm run dev
+```
+
+Environment changes require an API restart. Refresh the browser afterward.
+
+### Start the services separately, if needed
+
+Use **two terminals**, both in the project folder:
+
+```sh
+# Terminal 1: backend only
+npm run dev:server
+```
+
+```sh
+# Terminal 2: frontend only
+npm run dev:client
+```
+
+Choose either this two-terminal setup or `npm run dev`; do not run both setups at the same time. If a port is already in use, stop the earlier project's running process with Ctrl+C before starting another copy.
+
+### Tests and production build
+
+```sh
+npm test
+npm run test:server
+npm run build
+```
+
+`npm run build` checks TypeScript and creates `dist/`. It does not start the application. Use `npm run dev` for the complete local frontend/API workflow. Backend tests start their own temporary MongoDB; they do not require your Atlas database.
 
 ## The complete workflow
 
